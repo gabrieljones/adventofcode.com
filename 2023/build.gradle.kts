@@ -21,7 +21,7 @@ dependencies {
   testImplementation("org.openjdk.jmh:jmh-generator-bytecode:latest.release")
 
   components.all {
-    val lcVersion = id.version.toLowerCase()
+    val lcVersion = id.version.lowercase()
     if (
       lcVersion.contains("alpha")
       || lcVersion.contains("-b")
@@ -36,6 +36,10 @@ dependencies {
       status = "integration"
     }
   }
+}
+
+dependencyLocking {
+  lockAllConfigurations()
 }
 
 sourceSets {

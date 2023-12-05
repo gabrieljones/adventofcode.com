@@ -4,12 +4,6 @@ pluginManagement {
   }
 }
 
-buildscript {
-  dependencyLocking {
-    lockAllConfigurations()
-  }
-}
-
 dependencyResolutionManagement {
   repositories {
     mavenCentral()
