@@ -30,7 +30,7 @@ object `1` extends App {
   }
 
   for {
-    lines: Iterator[String] <- entries.map(_ ++ Iterator("", ""))
+    lines: Iterator[String] <- entries.map(_ ++ Iterator("", "")) //append two empty lines so .takeWhile(_ => lines.hasNext) will work
   } {
     val seeds = lines.next()
       .pipe(_.split(" ").drop(1))
