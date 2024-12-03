@@ -15,7 +15,7 @@ object `1` extends App {
   def srcs = inputs.map(Source.fromFile)
 
   for (src <- srcs) {
-    val Seq(a, b) =  src.getLines().map(_.split("   ").map(_.toLong)).toSeq.transpose
+    val Seq(a, b) =  src.getLines().map(_.split("   ").map(_.toInt)).toSeq.transpose
     val pairs = a.sorted.zip(b.sorted)
     val diffs = pairs.map{ case (ae, be) => be - ae}.map(Math.abs)
     val sum = diffs.sum
