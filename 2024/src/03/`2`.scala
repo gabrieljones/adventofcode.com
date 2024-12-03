@@ -19,18 +19,16 @@ object `2` extends App {
   val MulPattern = """mul\((\d+),(\d+)\)""".r
 
   for (src <- srcs) {
-    var enabled = true
-    var sum: Long = 0
     src
       .getLines()
       .flatMap(Pattern.findAllIn(_))
-      .foreach {
-        case "do()"    => enabled = true
-        case "don't()" => enabled = false
-        case MulPattern(a, b) if enabled =>
-          sum += a.toInt * b.toInt
-        case _ => // ignore
+      .foldLeft((true, 0L)) {
+        case ((_   , acc), "do()")    => (true , acc)
+        case ((_   , acc), "don't()") => (false, acc)
+        case ((true, acc), MulPattern(a, b)) => (true, acc + a.toLong * b.toLong)
+        case (z, _) => z //a mul after a don't, ignore it and pass z along
       }
-    println(sum)
+      .pipe(_._2) //just the Long from the z tuple (Boolean, Long)
+      .tap(println)
   }
 }
