@@ -15,7 +15,7 @@ object `2` extends App {
   def srcs = inputs.map(Source.fromFile)
 
   for (src <- srcs) {
-    val Seq(a, b) =  src.getLines().map(_.split("   ").map(_.toInt)).toSeq.transpose
+    val Seq(a, b) =  src.getLines().map(_.split(" {3}").map(_.toInt)).toSeq.transpose
     val similarities = a.map(e => e * b.count(_ == e))
     val similarity = similarities.sum
     println(similarity)
