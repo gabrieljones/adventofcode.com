@@ -15,31 +15,22 @@ object `2` extends App {
 
   def srcs = inputs.map(Source.fromFile)
 
-  val pattern = """do\(\)|don't\(\)|mul\(\d+,\d+\)""".r
+  val Pattern = """do\(\)|don't\(\)|mul\(\d+,\d+\)""".r
+  val MulPattern = """mul\((\d+),(\d+)\)""".r
 
   for (src <- srcs) {
-    val lines    = src.getLines()
-    val matches = lines.flatMap(pattern.findAllIn(_))
-
     var enabled = true
     var sum: Long = 0
-    while (matches.hasNext) {
-      val m = matches.next()
-      print(m)
-      if (m == "do()") {
-        enabled = true
-      } else if (m == "don't()") {
-        enabled = false
-      } else if (enabled) {
-        val args   = m.drop(4).dropRight(1).split(",").map(_.toLong)
-        print(" = ")
-        val product = args.product
-        print(product)
-        sum += product
+    src
+      .getLines()
+      .flatMap(Pattern.findAllIn(_))
+      .foreach {
+        case "do()"    => enabled = true
+        case "don't()" => enabled = false
+        case MulPattern(a, b) if enabled =>
+          sum += a.toInt * b.toInt
+        case _ => // ignore
       }
-      println()
-    }
-
     println(sum)
   }
 }

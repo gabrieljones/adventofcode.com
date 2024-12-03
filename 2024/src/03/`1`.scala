@@ -15,18 +15,14 @@ object `1` extends App {
 
   def srcs = inputs.map(Source.fromFile)
 
-  val pattern = """mul\(\d+,\d+\)""".r
+  val Pattern = """mul\((\d+),(\d+)\)""".r
 
   for (src <- srcs) {
-    val lines    = src.getLines()
-    val matches = lines.flatMap(pattern.findAllIn(_))
-
-    matches
-//      .tap(_.foreach(println))
-      .map(_.drop(4).dropRight(1).split(",").map(_.toLong))
-      .map{ case Array(a, b) => a * b}
+    src
+      .getLines()
+      .flatMap(Pattern.findAllIn(_))
+      .map { case Pattern(a, b) => a.toLong * b.toLong}
       .sum
       .tap(println)
-
   }
 }
