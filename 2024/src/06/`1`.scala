@@ -1,24 +1,30 @@
 package `06`
 
-import com.googlecode.lanterna.{TerminalSize, TextColor}
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory
-import com.googlecode.lanterna.terminal.swing.AWTTerminalFontConfiguration.{BoldMode, filterMonospaced, selectDefaultFont}
-import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration
+import com.googlecode.lanterna.terminal.swing.AWTTerminalFontConfiguration.{BoldMode, filterMonospaced}
+import com.googlecode.lanterna.terminal.swing.{SquareFontConfig, SwingTerminalFontConfiguration}
+import com.googlecode.lanterna.{TerminalSize, TextColor}
 
+import java.awt.{Font, GraphicsEnvironment}
 import java.io.File
 import java.nio.file.{Path, Paths}
 import scala.collection.mutable
 import scala.io.Source
 import scala.util.chaining.*
 
-class MyFontConfig() extends SwingTerminalFontConfiguration(false, BoldMode.EVERYTHING_BUT_SYMBOLS, filterMonospaced(selectDefaultFont(24) *) *) {
-  override def getFontHeight: Int = getFontWidth
-//  override def getFontWidth: Int = getFontHeight
-}
 object `1` extends App {
 
+  val fonts: Array[Font] = GraphicsEnvironment
+    .getLocalGraphicsEnvironment
+    .getAvailableFontFamilyNames
+    .map(new Font(_, Font.PLAIN, 10))
+    .pipe(fs => filterMonospaced(fs *))
+    .tap(_.mkString("\n").tap(println))
+    .drop(4)
+    .pipe(_ => Array(new Font("MesloLGS NF", Font.PLAIN, 10))) //effectively ignores all the code above this line
   val defaultTerminalFactory = new DefaultTerminalFactory()
-  private val fontConfiguration: SwingTerminalFontConfiguration = new MyFontConfig
+  val fontConfig = new SquareFontConfig(false, BoldMode.EVERYTHING_BUT_SYMBOLS, fonts, Option(8))
+  val fontConfiguration: SwingTerminalFontConfiguration = fontConfig
   defaultTerminalFactory.setTerminalEmulatorFontConfiguration(fontConfiguration)
   defaultTerminalFactory.setInitialTerminalSize(new TerminalSize(130, 130))
 
@@ -72,6 +78,13 @@ object `1` extends App {
       ci <- 0 until width
     } {
       g.setCharacter(ci, ri, map(ri)(ci))
+//      val newChar = map((ci, ri)) match {
+//        case '#' => '█'
+//        case '.' => '.'
+//        case '^' => '●'
+//        case _ => ' '
+//      }
+//      g.setCharacter(ci, ri, newChar)
       terminal.setCursorPosition(ci, ri)
       if (map(ci,ri) == '^') {
         cr = (ci,ri)
@@ -80,11 +93,13 @@ object `1` extends App {
     terminal.flush()
     map(cr) = '.'
 
+//    g.putString(0, 0, fontConfig.toString)
+
     var dir       = dirs.next()
     val positions = mutable.Set[(Int, Int)]()
     try {
       while (true) {
-        println(s"$cr $dir")
+//        println(s"$cr $dir")
         map(cr) = 'x'
         positions.add(cr)
 //        Thread.sleep(1)
@@ -104,5 +119,6 @@ object `1` extends App {
 //    terminal.close()
     println(positions.size)
     map.flatten.count(_ == 'x').tap(println)
+    println(fontConfig)
   }
 }
