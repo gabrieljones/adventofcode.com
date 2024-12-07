@@ -1,5 +1,6 @@
 plugins {
   scala
+  application
 }
 
 dependencies {
@@ -9,6 +10,8 @@ dependencies {
 
 //  implementation("org.processing:core:latest.release")
   implementation("com.google.guava:guava:latest.release")
+
+  implementation("com.googlecode.lanterna:lanterna:latest.release")
 
   testImplementation("org.scalatest:scalatest_3:latest.release")
   testImplementation("org.scalacheck:scalacheck_3:latest.release")
@@ -55,6 +58,10 @@ java {
   toolchain {
     languageVersion.set(JavaLanguageVersion.of(21))
   }
+}
+
+application {
+  mainClass.set("Foo")
 }
 
 tasks {
