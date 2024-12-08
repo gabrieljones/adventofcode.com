@@ -4,6 +4,7 @@ import com.googlecode.lanterna.terminal.DefaultTerminalFactory
 import com.googlecode.lanterna.terminal.swing.AWTTerminalFontConfiguration.{BoldMode, filterMonospaced}
 import com.googlecode.lanterna.terminal.swing.{SquareFontConfig, SwingTerminalFontConfiguration}
 import com.googlecode.lanterna.{TerminalSize, TextColor}
+import lib.*
 
 import java.awt.{Font, GraphicsEnvironment}
 import java.io.File
@@ -53,17 +54,6 @@ object `1` extends App {
       (-1, 0),
     )
   ).flatten
-
-  extension (co: (Int, Int)) {
-    def +(other: (Int, Int)): (Int, Int) = (co._1 + other._1, co._2 + other._2)
-    def c: Int = co._1
-    def r: Int = co._2
-  }
-
-  extension (map: Array[Array[Char]]) {
-    def apply(co: (Int, Int)): Char = map(co.r)(co.c)
-    def update(co: (Int, Int), ch: Char): Unit = map(co.r)(co.c) = ch
-  }
 
   for (src <- srcs) {
     val dirs = dirsInit
