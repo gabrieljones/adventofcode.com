@@ -1,3 +1,5 @@
+import scala.annotation.targetName
+
 package object lib {
   extension (co: (Int, Int)) {
     def +(other: (Int, Int)): (Int, Int) = (co._1 + other._1, co._2 + other._2)
@@ -9,5 +11,10 @@ package object lib {
   extension (map: Array[Array[Char]]) {
     def apply(co: (Int, Int)): Char = map(co.r)(co.c)
     def update(co: (Int, Int), ch: Char): Unit = map(co.r)(co.c) = ch
+  }
+  
+  extension (i: Int) {
+    @targetName("exponent")
+    def **(n: Int): Int = Iterator.continually(i).take(n).product
   }
 }
