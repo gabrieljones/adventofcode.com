@@ -16,16 +16,18 @@ object `1` extends App {
   def srcs = inputs.map(Source.fromFile)
 
   val pad = Iterator.continually(' ')
-  
+
   extension (ws: Array[Array[Char]]) {
-    def skew: Array[Array[Char]] = ws.zipWithIndex.map { case (row, i) => (pad.take(i) ++ row.iterator ++ pad).take(ws.length * 2).toArray }
+    def skew: Array[Array[Char]] =
+      ws.zipWithIndex
+        .map { case (row, i) => (pad.take(i) ++ row.iterator ++ pad).take(ws.length * 2).toArray }
   }
 
   val XMAS = "XMAS".toArray
 
   for (src <- srcs) {
-    val rows           : Array[Array[Char]]        = src.getLines().toArray.map(_.toArray)
-    val transformations: Array[Array[Array[Char]]] = Array(
+    val rows = src.getLines().toArray.map(_.toArray)
+    val transformations = Array(
       rows,
       rows.transpose,
       rows.skew.transpose,

@@ -21,18 +21,20 @@ object `2` extends App {
   )
 
   for (src <- srcs) {
-    val w = src.getLines().toArray
-    (for {
-      r <- 1 until w.length - 1
-      c <- 1 until w(r).length - 1
-      if w(r)(c) == 'A'
-      diags = x.map{case (ro, co) => w(r + ro)(c + co)}
-      if diags.count(_ == 'S') == 2 && diags.count(_ == 'M') == 2
-      if diags(1) != diags(2) // 🤦
-    } yield {
-      1
-    })
-      .sum
+    val w      = src.getLines().toArray
+    val rcs    = for {
+      r <- (1 until w.length - 1).iterator
+      c <- (1 until w(0).length - 1).iterator
+    } yield (r, c)
+    
+    rcs
+      .filter { case (r, c) => w(r)(c) == 'A'}
+      .map { case (r, c) => x.map { case (ro, co) => w(r + ro)(c + co) } }
+      .count(diags =>
+        diags.count(_ == 'S') == 2 &&
+        diags.count(_ == 'M') == 2 &&
+        diags(1) != diags(2)
+      )
       .tap(println)
   }
 }

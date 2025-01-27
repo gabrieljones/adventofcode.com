@@ -32,22 +32,34 @@ object `2` extends App {
   )
     .map(Path.of(_)).map(workingDir.resolve).map(_.toFile)
 
+  val arrows =
+    """↖↑↗
+      |←·→
+      |↙↓↘
+      |""".stripMargin
+      .split("\n")
+    
+  def vectorArrow(vx: Int, vy: Int): Char = {
+    val vectorMagnitude = Math.sqrt(vx * vx + vy * vy).toInt
+    val (uvy, uvx) = if (vectorMagnitude == 0) (0, 0)
+    else (vx / vectorMagnitude, vy / vectorMagnitude)
+    arrows(uvy+1)(uvx+1)
+  }
+
   val Pattern = """p=(\d+),(\d+) v=(-?\d+),(-?\d+)""".r
   def srcs = inputs.map(Source.fromFile)
 
   for (src <- srcs) {
     val bots = src.getLines()
       .map {
-        case Pattern(px, py, vx, vy) => ((px.toInt, py.toInt), (vx.toInt, vy.toInt))
+        case Pattern(px, py, vx, vy) => (px.toInt, py.toInt, vx.toInt, vy.toInt, 'f')
       }
       .toSeq
 
-    val wide  = bots.maxBy(_._1._1)._1._1 + 1
-    val wideM = wide / 2
-    val tall  = bots.maxBy(_._1._2)._1._2 + 1
-    val tallM = tall / 2
+    val wide  = bots.maxBy(_._1)._1 + 1
+    val tall  = bots.maxBy(_._2)._2 + 1
 
-    bots.foreach { case ((px, py), (vx, vy)) =>
+    bots.foreach { case (px, py, vx, vy, arr) =>
       var cnc = g.getCharacter(px, py).getCharacter.asDigit
       if (cnc == -1) cnc = 0
       val cnn = cnc + 1
@@ -88,16 +100,17 @@ object `2` extends App {
       }
 
 
-      val finalPos = bots.map { case ((px, py), (vx, vy)) => (Math.floorMod(px + s * vx, wide), Math.floorMod(py + s * vy, tall)) }.toSeq
+      val finalPos = bots.map { case (px, py, vx, vy, arr) => (Math.floorMod(px + s * vx, wide), Math.floorMod(py + s * vy, tall), vx, vy, arr) }.toSeq
 
       terminal.clearScreen()
       finalPos
 //        .filterNot((x, y) => x == wideM || y == tallM)
-        .foreach { case (px, py) =>
+        .foreach { case (px, py, vx, vy, arr) =>
           var cnc = g.getCharacter(px, py).getCharacter.asDigit
           if (cnc == -1) cnc = 0
           val cnn = cnc + 1
-          g.putString(px, py, cnn.toString)
+//          g.putString(px, py, cnn.toString)
+          g.putString(px, py, arr.toString)
         }
       g.putString(0, 0, f"$s%020d")
       terminal.flush()
